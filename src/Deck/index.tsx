@@ -65,8 +65,9 @@ export const Deck: React.FC<DeckProps> = ({
     if (!disableScrollbarsFor) return;
 
     disableScrollbarsFor
-      .map(document.querySelectorAll)
-      .flatMap((collection) => [...collection] as HTMLElement[])
+      .flatMap(
+        (query) => [...document.querySelectorAll(query)] as HTMLElement[]
+      )
       .forEach((element) => {
         element.style.overflow = "hidden";
       });
