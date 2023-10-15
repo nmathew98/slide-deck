@@ -36,6 +36,7 @@ export const Deck: React.FC<DeckProps> = ({
         ...style,
         scrollSnapType: horizontal ? "x mandatory" : "y mandatory",
         overflow: "scroll",
+        scrollBehavior: "smooth",
       }}
     />
   );

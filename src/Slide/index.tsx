@@ -11,41 +11,56 @@ export interface SlideProps
   options?: InViewOptions;
 }
 
+export interface SlideHandles {
+  scrollIntoView: () => void;
+}
+
 const DEFAULT_OPTIONS: InViewOptions = {
   amount: 0.5,
 };
 
-export const Slide: React.FC<SlideProps> = ({
-  onEnterViewport,
-  onExitViewport,
-  options = DEFAULT_OPTIONS,
-  style,
-  ...rest
-}) => {
-  const ref = React.useRef<null | HTMLDivElement>(null);
+export const Slide = React.forwardRef<SlideHandles, SlideProps>(
+  (
+    {
+      onEnterViewport,
+      onExitViewport,
+      options = DEFAULT_OPTIONS,
+      style,
+      ...rest
+    },
+    ref
+  ) => {
+    const slideRef = React.useRef<null | HTMLDivElement>(null);
 
-  React.useLayoutEffect(() => {
-    if (!ref.current) return;
+    const createHandles = (): SlideHandles => ({
+      scrollIntoView: () => slideRef.current?.scrollIntoView(),
+    });
 
-    const onStart = (entry: IntersectionObserverEntry) => {
-      onEnterViewport?.(entry);
+    React.useImperativeHandle(ref, createHandles, []);
 
-      return onExitViewport;
-    };
+    React.useLayoutEffect(() => {
+      if (!slideRef.current) return;
 
-    return inView(ref.current, onStart, options);
-  }, [onEnterViewport, onExitViewport, options]);
+      const onStart = (entry: IntersectionObserverEntry) => {
+        onEnterViewport?.(entry);
 
-  return (
-    <div
-      {...rest}
-      ref={ref}
-      style={{
-        height: "100vh",
-        width: "100vw",
-        scrollSnapAlign: "start",
-        ...style,
-      }}
-    />
-  );
-};
+        return onExitViewport;
+      };
+
+      return inView(slideRef.current, onStart, options);
+    }, [onEnterViewport, onExitViewport, options]);
+
+    return (
+      <div
+        {...rest}
+        ref={slideRef}
+        style={{
+          height: "100vh",
+          width: "100vw",
+          scrollSnapAlign: "start",
+          ...style,
+        }}
+      />
+    );
+  }
+);
