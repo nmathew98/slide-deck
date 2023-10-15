@@ -1,34 +1,39 @@
-import { type InViewOptions, type ViewChangeHandler, inView } from "motion";
 import React from "react";
+import { type InViewOptions, type ViewChangeHandler, inView } from "motion";
 
 export interface SlideProps
   extends React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > {
-  onEnterViewport?: Parameters<typeof inView>[1];
+  onEnterViewport?: ViewChangeHandler;
   onExitViewport?: ViewChangeHandler;
   options?: InViewOptions;
 }
 
-export const Slide = ({
+const DEFAULT_OPTIONS: InViewOptions = {
+  amount: 0.5,
+};
+
+export const Slide: React.FC<SlideProps> = ({
   onEnterViewport,
   onExitViewport,
-  options = { amount: 0.5 },
+  options = DEFAULT_OPTIONS,
+  style,
   ...rest
-}: SlideProps) => {
+}) => {
   const ref = React.useRef<null | HTMLDivElement>(null);
 
   React.useLayoutEffect(() => {
-    if (ref.current) {
-      const onStart = (entry: IntersectionObserverEntry) => {
-        onEnterViewport?.(entry);
+    if (!ref.current) return;
 
-        return onExitViewport;
-      };
+    const onStart = (entry: IntersectionObserverEntry) => {
+      onEnterViewport?.(entry);
 
-      inView(ref.current, onStart, options);
-    }
+      return onExitViewport;
+    };
+
+    return inView(ref.current, onStart, options);
   }, [onEnterViewport, onExitViewport, options]);
 
   return (
@@ -39,7 +44,7 @@ export const Slide = ({
         height: "100vh",
         width: "100vw",
         scrollSnapAlign: "start",
-        ...rest.style,
+        ...style,
       }}
     />
   );
