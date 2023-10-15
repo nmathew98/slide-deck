@@ -26,24 +26,31 @@ export const Deck: React.FC<DeckProps> = ({
   const currentSlide = React.useRef<number>(startAt);
 
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> =
-    React.useCallback((event) => {
-      if (event.key !== "ArrowDown") return;
+    React.useCallback(
+      (event) => {
+        const VALID_KEY = horizontal ? "ArrowLeft" : "ArrowDown";
 
-      if (
-        currentSlide.current <= 0 ||
-        currentSlide.current >= slides.current.length - 1
-      )
-        return;
+        if (event.key !== VALID_KEY) return;
 
-      const nextSlide = currentSlide.current - 1;
+        if (
+          currentSlide.current <= 0 ||
+          currentSlide.current >= slides.current.length - 1
+        )
+          return;
 
-      slides.current.at(nextSlide)?.scrollIntoView();
-      currentSlide.current = nextSlide;
-    }, []);
+        const nextSlide = currentSlide.current - 1;
+
+        slides.current.at(nextSlide)?.scrollIntoView();
+        currentSlide.current = nextSlide;
+      },
+      [horizontal]
+    );
 
   const onKeyUp: React.KeyboardEventHandler<HTMLDivElement> = React.useCallback(
     (event) => {
-      if (event.key !== "ArrowUp") return;
+      const VALID_KEY = horizontal ? "ArrowRight" : "ArrowUp";
+
+      if (event.key !== VALID_KEY) return;
 
       if (
         currentSlide.current <= 0 ||
@@ -56,7 +63,7 @@ export const Deck: React.FC<DeckProps> = ({
       slides.current.at(nextSlide)?.scrollIntoView();
       currentSlide.current = nextSlide;
     },
-    []
+    [horizontal]
   );
 
   React.useLayoutEffect(() => {
