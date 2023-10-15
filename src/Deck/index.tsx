@@ -102,7 +102,8 @@ export const Deck: React.FC<DeckProps> = ({
     <div
       {...rest}
       style={{
-        height: "100vh",
+        height: horizontal ? "auto" : "100vh",
+        width: horizontal ? "100vw" : "auto",
         ...style,
         scrollSnapType: horizontal ? "x mandatory" : "y mandatory",
         overflow: "scroll",
