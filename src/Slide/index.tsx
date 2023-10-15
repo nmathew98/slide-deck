@@ -11,9 +11,7 @@ export interface SlideProps
   options?: InViewOptions;
 }
 
-export interface SlideHandles {
-  scrollIntoView: () => void;
-}
+export type SlideHandles = Pick<HTMLDivElement, "scrollIntoView">;
 
 const DEFAULT_OPTIONS: InViewOptions = {
   amount: 0.5,
@@ -33,7 +31,7 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     const slideRef = React.useRef<null | HTMLDivElement>(null);
 
     const createHandles = (): SlideHandles => ({
-      scrollIntoView: () => slideRef.current?.scrollIntoView(),
+      scrollIntoView: (slideRef.current as HTMLDivElement).scrollIntoView,
     });
 
     React.useImperativeHandle(ref, createHandles, []);
@@ -41,7 +39,7 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     React.useLayoutEffect(() => {
       if (!slideRef.current) return;
 
-      const onStart = (entry: IntersectionObserverEntry) => {
+      const onStart: ViewChangeHandler = (entry) => {
         onEnterViewport?.(entry);
 
         return onExitViewport;
