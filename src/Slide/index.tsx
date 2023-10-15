@@ -1,5 +1,6 @@
 import React from "react";
 import { type InViewOptions, type ViewChangeHandler, inView } from "motion";
+import "./styles.css";
 
 export interface SlideProps
   extends React.DetailedHTMLProps<
@@ -23,7 +24,7 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
       onEnterViewport,
       onExitViewport,
       options = DEFAULT_OPTIONS,
-      style,
+      className,
       ...rest
     },
     ref
@@ -48,17 +49,13 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
       return inView(slideRef.current, onStart, options);
     }, [onEnterViewport, onExitViewport, options]);
 
-    return (
-      <div
-        {...rest}
-        ref={slideRef}
-        style={{
-          height: "100vh",
-          width: "100vw",
-          scrollSnapAlign: "start",
-          ...style,
-        }}
-      />
-    );
+    const classNames = [
+      "h-screen",
+      "w-screen",
+      "snap-start",
+      className ?? "",
+    ].filter(Boolean);
+
+    return <div {...rest} ref={slideRef} className={classNames.join(" ")} />;
   }
 );

@@ -1,6 +1,7 @@
 import React from "react";
 import { Slide, type SlideProps } from "../Slide";
 import { scroll } from "motion";
+import "./styles.css";
 
 export interface DeckProps
   extends Omit<
@@ -20,12 +21,12 @@ export interface DeckProps
 const DEFAULT_SELECTORS: HTMLElementTagName[] = ["html", "body"];
 
 export const Deck: React.FC<DeckProps> = ({
-  style,
   horizontal,
   disableScrollbarsFor = DEFAULT_SELECTORS,
   startAt = 0,
   children,
   onScroll,
+  className,
   ...rest
 }) => {
   const deckRef = React.useRef<null | HTMLDivElement>(null);
@@ -77,7 +78,8 @@ export const Deck: React.FC<DeckProps> = ({
         (query) => [...document.querySelectorAll(query)] as HTMLElement[]
       )
       .forEach((element) => {
-        element.style.overflow = "hidden";
+        if (!element.classList.contains("overflow-hidden"))
+          element.classList.add("overflow-hidden");
       });
   }, [disableScrollbarsFor]);
 
@@ -90,11 +92,8 @@ export const Deck: React.FC<DeckProps> = ({
   React.useEffect(
     () =>
       scroll(({ x, y }) => {
-        if (horizontal) {
-          onScroll?.(x.progress);
-        } else {
-          onScroll?.(y.progress);
-        }
+        if (horizontal) onScroll?.(x.progress);
+        else onScroll?.(y.progress);
       }),
     [horizontal, onScroll]
   );
@@ -103,19 +102,20 @@ export const Deck: React.FC<DeckProps> = ({
     deckRef.current?.focus();
   }, []);
 
+  const classNames = [
+    horizontal ? "w-auto h-screen" : "h-auto w-screen",
+    horizontal ? "snap-x" : "snap-y",
+    "overflow-scroll",
+    "smooth-scroll",
+    className ?? "",
+  ].filter(Boolean);
+
   return (
     <div
       {...rest}
       ref={deckRef}
       tabIndex={0}
-      style={{
-        height: horizontal ? "auto" : "100vh",
-        width: horizontal ? "100vw" : "auto",
-        ...style,
-        scrollSnapType: horizontal ? "x mandatory" : "y mandatory",
-        overflow: "scroll",
-        scrollBehavior: "smooth",
-      }}
+      className={classNames.join(" ")}
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
     >
