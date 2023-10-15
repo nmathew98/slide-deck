@@ -25,6 +25,9 @@ export const Deck: React.FC<DeckProps> = ({
   const slides = React.useRef<HTMLDivElement[]>([]);
   const currentSlide = React.useRef<number>(startAt);
 
+  const isOutOfBounds = (idx: number) =>
+    slides.current.length > 0 && (idx <= 0 || idx >= slides.current.length - 1);
+
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> =
     React.useCallback(
       (event) => {
@@ -32,11 +35,7 @@ export const Deck: React.FC<DeckProps> = ({
 
         if (event.key !== VALID_KEY) return;
 
-        if (
-          currentSlide.current <= 0 ||
-          currentSlide.current >= slides.current.length - 1
-        )
-          return;
+        if (isOutOfBounds(currentSlide.current)) return;
 
         const nextSlide = currentSlide.current - 1;
 
@@ -52,11 +51,7 @@ export const Deck: React.FC<DeckProps> = ({
 
       if (event.key !== VALID_KEY) return;
 
-      if (
-        currentSlide.current <= 0 ||
-        currentSlide.current >= slides.current.length - 1
-      )
-        return;
+      if (isOutOfBounds(currentSlide.current)) return;
 
       const nextSlide = currentSlide.current + 1;
 
@@ -78,7 +73,7 @@ export const Deck: React.FC<DeckProps> = ({
   }, [disableScrollbarsFor]);
 
   React.useLayoutEffect(() => {
-    if (startAt <= 0 || startAt >= slides.current.length - 1) return;
+    if (isOutOfBounds(startAt)) return;
 
     slides.current.at(startAt)?.scrollIntoView();
   }, [startAt]);
