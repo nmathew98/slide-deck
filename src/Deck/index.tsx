@@ -99,7 +99,7 @@ export const Deck: React.FC<DeckProps> = ({
     [horizontal, onScroll]
   );
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     deckRef.current?.focus();
   }, []);
 
