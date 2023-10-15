@@ -93,13 +93,9 @@ export const Deck: React.FC<DeckProps> = ({
       onKeyUp={onKeyUp}
     >
       {React.Children.map(children, (child, idx) => {
-        if (child?.type !== Slide) {
-          return null;
-        }
+        if (child?.type !== Slide) return null;
 
-        if (idx === 0) {
-          slides.current = [];
-        }
+        if (idx === 0) slides.current = [];
 
         return React.cloneElement(child, {
           ref: (instance: HTMLDivElement | null) => {
