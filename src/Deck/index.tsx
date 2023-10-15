@@ -86,15 +86,17 @@ export const Deck: React.FC<DeckProps> = ({
     slides.current.at(startAt)?.scrollIntoView();
   }, [startAt]);
 
-  React.useLayoutEffect(() => {
-    scroll(({ x, y }) => {
-      if (horizontal) {
-        onScroll?.(x.progress);
-      } else {
-        onScroll?.(y.progress);
-      }
-    });
-  }, [horizontal, onScroll]);
+  React.useLayoutEffect(
+    () =>
+      scroll(({ x, y }) => {
+        if (horizontal) {
+          onScroll?.(x.progress);
+        } else {
+          onScroll?.(y.progress);
+        }
+      }),
+    [horizontal, onScroll]
+  );
 
   return (
     <div
