@@ -28,6 +28,7 @@ export const Deck: React.FC<DeckProps> = ({
   onScroll,
   ...rest
 }) => {
+  const deckRef = React.useRef<null | HTMLDivElement>(null);
   const slides = React.useRef<HTMLDivElement[]>([]);
   const currentSlide = React.useRef<number>(startAt);
 
@@ -98,9 +99,15 @@ export const Deck: React.FC<DeckProps> = ({
     [horizontal, onScroll]
   );
 
+  React.useLayoutEffect(() => {
+    deckRef.current?.focus();
+  }, []);
+
   return (
     <div
       {...rest}
+      ref={deckRef}
+      tabIndex={0}
       style={{
         height: horizontal ? "auto" : "100vh",
         width: horizontal ? "100vw" : "auto",
