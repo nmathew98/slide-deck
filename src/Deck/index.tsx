@@ -1,15 +1,20 @@
 import React from "react";
 import { Slide, type SlideProps } from "../Slide";
+import { scroll } from "motion";
 
 export interface DeckProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
+  extends Omit<
+    React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLDivElement>,
+      HTMLDivElement
+    >,
+    "onScroll"
   > {
-  startAt?: number;
   children: React.ReactElement<SlideProps> | React.ReactElement<SlideProps>[];
+  startAt?: number;
   horizontal?: boolean;
   disableScrollbarsFor?: false | (HTMLElementTagName | string)[];
+  onScroll?: (progress: number) => void;
 }
 
 const DEFAULT_SELECTORS: HTMLElementTagName[] = ["html", "body"];
@@ -20,13 +25,11 @@ export const Deck: React.FC<DeckProps> = ({
   disableScrollbarsFor = DEFAULT_SELECTORS,
   startAt = 0,
   children,
+  onScroll,
   ...rest
 }) => {
   const slides = React.useRef<HTMLDivElement[]>([]);
   const currentSlide = React.useRef<number>(startAt);
-
-  const isOutOfBounds = (idx: number) =>
-    slides.current.length > 0 && (idx <= 0 || idx >= slides.current.length - 1);
 
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> =
     React.useCallback(
@@ -35,14 +38,16 @@ export const Deck: React.FC<DeckProps> = ({
 
         if (event.key !== VALID_KEY) return;
 
-        if (isOutOfBounds(currentSlide.current)) return;
+        if (isOutOfBounds(currentSlide.current, slides.current)) return;
 
         const nextSlide = currentSlide.current - 1;
 
         slides.current.at(nextSlide)?.scrollIntoView();
         currentSlide.current = nextSlide;
+
+        onScroll?.(getProgress(nextSlide, slides.current));
       },
-      [horizontal]
+      [horizontal, onScroll]
     );
 
   const onKeyUp: React.KeyboardEventHandler<HTMLDivElement> = React.useCallback(
@@ -51,14 +56,16 @@ export const Deck: React.FC<DeckProps> = ({
 
       if (event.key !== VALID_KEY) return;
 
-      if (isOutOfBounds(currentSlide.current)) return;
+      if (isOutOfBounds(currentSlide.current, slides.current)) return;
 
       const nextSlide = currentSlide.current + 1;
 
       slides.current.at(nextSlide)?.scrollIntoView();
       currentSlide.current = nextSlide;
+
+      onScroll?.(getProgress(nextSlide, slides.current));
     },
-    [horizontal]
+    [horizontal, onScroll]
   );
 
   React.useLayoutEffect(() => {
@@ -74,10 +81,20 @@ export const Deck: React.FC<DeckProps> = ({
   }, [disableScrollbarsFor]);
 
   React.useLayoutEffect(() => {
-    if (isOutOfBounds(startAt)) return;
+    if (isOutOfBounds(startAt, slides.current)) return;
 
     slides.current.at(startAt)?.scrollIntoView();
   }, [startAt]);
+
+  React.useLayoutEffect(() => {
+    scroll(({ x, y }) => {
+      if (horizontal) {
+        onScroll?.(x.progress);
+      } else {
+        onScroll?.(y.progress);
+      }
+    });
+  }, [horizontal, onScroll]);
 
   return (
     <div
@@ -110,3 +127,9 @@ export const Deck: React.FC<DeckProps> = ({
 };
 
 type HTMLElementTagName = keyof HTMLElementTagNameMap;
+
+const isOutOfBounds = (idx: number, slides: HTMLDivElement[]) =>
+  slides.length > 0 && (idx <= 0 || idx >= slides.length - 1);
+
+const getProgress = (idx: number, slides: HTMLDivElement[]) =>
+  (idx + 1) / slides.length;
