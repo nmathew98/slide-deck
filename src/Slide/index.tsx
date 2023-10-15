@@ -36,7 +36,7 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
 
     React.useImperativeHandle(ref, createHandles, []);
 
-    React.useLayoutEffect(() => {
+    React.useEffect(() => {
       if (!slideRef.current) return;
 
       const onStart: ViewChangeHandler = (entry) => {
