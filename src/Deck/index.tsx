@@ -31,7 +31,7 @@ export const Deck: React.FC<DeckProps> = ({
 }) => {
   const deckRef = React.useRef<null | HTMLDivElement>(null);
   const slides = React.useRef<HTMLDivElement[]>([]);
-  const currentSlide = React.useRef<number>(startAt);
+  const currentSlide = React.useRef<number>(0);
 
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> =
     React.useCallback(
@@ -79,6 +79,7 @@ export const Deck: React.FC<DeckProps> = ({
     slides.current.at(startAt)?.scrollIntoView({
       behavior: "instant",
     });
+    currentSlide.current = startAt;
   }, [startAt]);
 
   React.useEffect(
