@@ -73,7 +73,7 @@ export const Deck: React.FC<DeckProps> = ({
       });
   }, [disableScrollbarsFor]);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!isWithinBounds(startAt, slides.current)) return;
 
     slides.current.at(startAt)?.scrollIntoView({
