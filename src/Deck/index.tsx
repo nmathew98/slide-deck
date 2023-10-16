@@ -116,7 +116,7 @@ export const Deck: React.FC<DeckProps> = ({
         if (child?.type !== Slide) return null;
 
         // NOTE: While developing, the render function gets called twice
-        // so there are 6 elements in `slides`, relying on the fact that
+        // so there are 2x elements in `slides`, relying on the fact that
         // the elements are rendered in order to reset the array between re-renders
         return React.cloneElement(child, {
           ref: (instance: HTMLDivElement | null) => {
