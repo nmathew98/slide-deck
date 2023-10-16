@@ -36,35 +36,29 @@ export const Deck: React.FC<DeckProps> = ({
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> =
     React.useCallback(
       (event) => {
-        const VALID_KEY = horizontal ? "ArrowLeft" : "ArrowDown";
+        const isKeyValid = (key: string) =>
+          horizontal
+            ? key === "ArrowLeft" || key === "ArrowRight"
+            : key === "ArrowUp" || key === "ArrowDown";
 
-        if (event.key !== VALID_KEY) return;
+        if (!isKeyValid(event.key)) return;
 
-        if (isOutOfBounds(currentSlide.current, slides.current)) return;
+        event.preventDefault();
 
-        const nextSlide = currentSlide.current - 1;
+        const increment =
+          event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1;
 
-        slides.current.at(nextSlide)?.scrollIntoView();
+        const nextSlide = currentSlide.current + increment;
+
+        if (!isWithinBounds(nextSlide, slides.current)) return;
+
+        slides.current.at(nextSlide)?.scrollIntoView({
+          behavior: "smooth",
+        });
         currentSlide.current = nextSlide;
       },
       [horizontal]
     );
-
-  const onKeyUp: React.KeyboardEventHandler<HTMLDivElement> = React.useCallback(
-    (event) => {
-      const VALID_KEY = horizontal ? "ArrowRight" : "ArrowUp";
-
-      if (event.key !== VALID_KEY) return;
-
-      if (isOutOfBounds(currentSlide.current, slides.current)) return;
-
-      const nextSlide = currentSlide.current + 1;
-
-      slides.current.at(nextSlide)?.scrollIntoView();
-      currentSlide.current = nextSlide;
-    },
-    [horizontal]
-  );
 
   React.useLayoutEffect(() => {
     if (!disableScrollbarsFor) return;
@@ -80,9 +74,11 @@ export const Deck: React.FC<DeckProps> = ({
   }, [disableScrollbarsFor]);
 
   React.useEffect(() => {
-    if (isOutOfBounds(startAt, slides.current)) return;
+    if (!isWithinBounds(startAt, slides.current)) return;
 
-    slides.current.at(startAt)?.scrollIntoView();
+    slides.current.at(startAt)?.scrollIntoView({
+      behavior: "instant",
+    });
   }, [startAt]);
 
   React.useEffect(
@@ -114,16 +110,18 @@ export const Deck: React.FC<DeckProps> = ({
       tabIndex={0}
       className={classNames.join(" ")}
       onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
     >
       {React.Children.map(children, (child, idx) => {
         if (child?.type !== Slide) return null;
 
-        if (idx === 0) slides.current = [];
-
+        // NOTE: While developing, the render function gets called twice
+        // so there are 6 elements in `slides`, relying on the fact that
+        // the elements are rendered in order to reset the array between re-renders
         return React.cloneElement(child, {
           ref: (instance: HTMLDivElement | null) => {
             if (!instance) return;
+
+            if (idx === 0) slides.current = [];
 
             slides.current.push(instance);
           },
@@ -135,5 +133,5 @@ export const Deck: React.FC<DeckProps> = ({
 
 type HTMLElementTagName = keyof HTMLElementTagNameMap;
 
-const isOutOfBounds = (idx: number, slides: HTMLDivElement[]) =>
-  slides.length > 0 && (idx <= 0 || idx >= slides.length - 1);
+const isWithinBounds = (idx: number, slides: HTMLDivElement[]) =>
+  slides.length > 0 && idx >= 0 && idx <= slides.length - 1;

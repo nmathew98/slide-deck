@@ -32,8 +32,8 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     const slideRef = React.useRef<null | HTMLDivElement>(null);
 
     const createHandles = (): SlideHandles => ({
-      scrollIntoView: () =>
-        (slideRef.current as HTMLDivElement).scrollIntoView(),
+      scrollIntoView: (arg?: boolean | ScrollIntoViewOptions) =>
+        (slideRef.current as HTMLDivElement).scrollIntoView(arg),
     });
 
     React.useImperativeHandle(ref, createHandles, []);
