@@ -7,7 +7,7 @@ function App() {
       <Slide
         onEnterViewport={() => console.log("enter First!!")}
         onExitViewport={() => console.log("exit first!!")}
-        style={{ backgroundColor: "black" }}
+        style={{ flexBasis: "100%", backgroundColor: "black" }}
       />
       <Slide
         onEnterViewport={() => console.log("enter second!!")}

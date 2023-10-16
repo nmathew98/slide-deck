@@ -103,8 +103,8 @@ export const Deck: React.FC<DeckProps> = ({
   }, []);
 
   const classNames = [
-    horizontal ? "w-auto h-screen" : "h-auto w-screen",
     horizontal ? "snap-x" : "snap-y",
+    "w-screen h-screen",
     "overflow-scroll",
     "smooth-scroll",
     className ?? "",

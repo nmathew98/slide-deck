@@ -1,35 +1,27 @@
-h-auto {
-    height: auto;
-}
-
-h-screen {
+.h-screen {
     height: 100vh;
 }
 
-w-auto {
-    height: auto;
-}
-
-w-screen {
+.w-screen {
     width: 100vw;
 }
 
-snap-x {
+.snap-x {
     scroll-snap-type: x mandatory;
 }
 
-snap-y {
+.snap-y {
     scroll-snap-type: y mandatory;
 }
 
-overflow-scroll {
+.overflow-scroll {
     overflow: scroll;
 }
 
-overflow-hidden {
+.overflow-hidden {
     overflow: hidden;
 }
 
-scroll-smooth {
+.scroll-smooth {
     scroll-behavior: smooth;
 }

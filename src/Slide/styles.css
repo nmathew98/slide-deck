@@ -1,11 +1,11 @@
-h-screen {
+.h-screen {
     height: 100vh;
 }
 
-w-screen {
+.w-screen {
     height: 100vw;
 }
 
-snap-start {
+.snap-start {
     scroll-snap-align: start;
 }
