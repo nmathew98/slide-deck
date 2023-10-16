@@ -46,10 +46,8 @@ export const Deck: React.FC<DeckProps> = ({
 
         slides.current.at(nextSlide)?.scrollIntoView();
         currentSlide.current = nextSlide;
-
-        onScroll?.(getProgress(nextSlide, slides.current));
       },
-      [horizontal, onScroll]
+      [horizontal]
     );
 
   const onKeyUp: React.KeyboardEventHandler<HTMLDivElement> = React.useCallback(
@@ -64,10 +62,8 @@ export const Deck: React.FC<DeckProps> = ({
 
       slides.current.at(nextSlide)?.scrollIntoView();
       currentSlide.current = nextSlide;
-
-      onScroll?.(getProgress(nextSlide, slides.current));
     },
-    [horizontal, onScroll]
+    [horizontal]
   );
 
   React.useLayoutEffect(() => {
@@ -140,6 +136,3 @@ type HTMLElementTagName = keyof HTMLElementTagNameMap;
 
 const isOutOfBounds = (idx: number, slides: HTMLDivElement[]) =>
   slides.length > 0 && (idx <= 0 || idx >= slides.length - 1);
-
-const getProgress = (idx: number, slides: HTMLDivElement[]) =>
-  (idx + 1) / slides.length;
