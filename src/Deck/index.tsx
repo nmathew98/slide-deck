@@ -88,8 +88,9 @@ export const Deck: React.FC<DeckProps> = ({
   React.useEffect(
     () =>
       scroll(({ x, y }) => {
-        if (horizontal) onScroll?.(x.progress);
-        else onScroll?.(y.progress);
+        const progress = horizontal ? x.progress : y.progress;
+
+        onScroll?.(progress);
       }),
     [horizontal, onScroll]
   );
