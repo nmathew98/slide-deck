@@ -71,6 +71,11 @@ export const Deck: React.FC<DeckProps> = ({
         if (!element.classList.contains("overflow-hidden"))
           element.classList.add("overflow-hidden");
       });
+
+    const bodyElement = document.getElementsByTagName("body").item(0);
+
+    if (!bodyElement?.classList.contains("margin-none"))
+      bodyElement?.classList.add("margin-none");
   }, [disableScrollbarsFor]);
 
   React.useLayoutEffect(() => {
@@ -83,15 +88,16 @@ export const Deck: React.FC<DeckProps> = ({
   }, [startAt]);
 
   React.useEffect(() => {
-    if (deckRef.current)
-      return scroll(
-        ({ x, y }) => {
-          const scrollInfo = horizontal ? x : y;
+    if (!deckRef.current) return;
 
-          onScroll?.(scrollInfo);
-        },
-        { container: deckRef.current, axis: horizontal ? "x" : "y" }
-      );
+    return scroll(
+      ({ x, y }) => {
+        const scrollInfo = horizontal ? x : y;
+
+        onScroll?.(scrollInfo);
+      },
+      { container: deckRef.current, axis: horizontal ? "x" : "y" }
+    );
   }, [horizontal, onScroll]);
 
   React.useEffect(() => {
