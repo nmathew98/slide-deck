@@ -1,6 +1,6 @@
 import React from "react";
 import { Slide, type SlideProps } from "../Slide";
-import { scroll } from "motion";
+import { type AxisScrollInfo, scroll } from "motion";
 import "./styles.css";
 
 export interface DeckProps
@@ -15,7 +15,7 @@ export interface DeckProps
   startAt?: number;
   horizontal?: boolean;
   disableScrollbarsFor?: false | (HTMLElementTagName | string)[];
-  onScroll?: (progress: number) => void;
+  onScroll?: (scrollInfo: AxisScrollInfo) => void;
 }
 
 const DEFAULT_SELECTORS: HTMLElementTagName[] = ["html", "body"];
@@ -82,15 +82,17 @@ export const Deck: React.FC<DeckProps> = ({
     currentSlide.current = startAt;
   }, [startAt]);
 
-  React.useEffect(
-    () =>
-      scroll(({ x, y }) => {
-        const progress = horizontal ? x.progress : y.progress;
+  React.useEffect(() => {
+    if (deckRef.current)
+      return scroll(
+        ({ x, y }) => {
+          const scrollInfo = horizontal ? x : y;
 
-        onScroll?.(progress);
-      }),
-    [horizontal, onScroll]
-  );
+          onScroll?.(scrollInfo);
+        },
+        { container: deckRef.current, axis: horizontal ? "x" : "y" }
+      );
+  }, [horizontal, onScroll]);
 
   React.useEffect(() => {
     deckRef.current?.focus();
@@ -101,6 +103,7 @@ export const Deck: React.FC<DeckProps> = ({
     "w-screen h-screen",
     "overflow-scroll",
     "smooth-scroll",
+    horizontal ? "flex" : "",
     className ?? "",
   ].filter(Boolean);
 
@@ -118,7 +121,7 @@ export const Deck: React.FC<DeckProps> = ({
         // NOTE: While developing, the render function gets called twice
         // so there are 2x elements in `slides`, relying on the fact that
         // the elements are rendered in order to reset the array between re-renders
-        return React.cloneElement(child, {
+        const clonedChild = React.cloneElement(child, {
           ref: (instance: HTMLDivElement | null) => {
             if (!instance) return;
 
@@ -127,6 +130,12 @@ export const Deck: React.FC<DeckProps> = ({
             slides.current.push(instance);
           },
         });
+
+        if (horizontal) {
+          return <div className="h-full w-full">{clonedChild}</div>;
+        }
+
+        return clonedChild;
       })}
     </div>
   );
