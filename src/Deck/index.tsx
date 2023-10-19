@@ -94,16 +94,19 @@ export const Deck: React.FC<DeckProps> = ({
       ({ x, y }) => {
         const scrollInfo = horizontal ? x : y;
 
-        const previousSlideIdx = Math.floor(
-          scrollInfo.progress * slides.current.length
-        );
-        const nextSlideIdx =
+        const fromIdx = Math.floor(scrollInfo.progress * slides.current.length);
+        const toIdx =
           Math.floor(scrollInfo.progress * slides.current.length) + 1;
+
+        const from = slides.current.at(fromIdx);
+        const to = slides.current.at(toIdx);
+
+        if (!from) return;
 
         onScroll?.({
           axis: scrollInfo,
-          current: slides.current.at(previousSlideIdx),
-          next: slides.current.at(nextSlideIdx),
+          from,
+          to,
         });
       },
       { container: deckRef.current, axis: horizontal ? "x" : "y" }
@@ -162,6 +165,6 @@ const isWithinBounds = (idx: number, slides: HTMLDivElement[]) =>
 
 interface ScrollInfo {
   axis: AxisScrollInfo;
-  next?: HTMLElement | null;
-  current?: HTMLElement | null;
+  from?: HTMLElement | null;
+  to?: HTMLElement | null;
 }
