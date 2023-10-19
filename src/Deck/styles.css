@@ -1,0 +1,43 @@
+body {
+    margin: 0rem 0rem 0rem 0rem;
+}
+
+.h-screen {
+    height: 100vh;
+}
+
+.w-screen {
+    width: 100vw;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.snap-x {
+    scroll-snap-type: x mandatory;
+}
+
+.snap-y {
+    scroll-snap-type: y mandatory;
+}
+
+.overflow-scroll {
+    overflow: scroll;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.scroll-smooth {
+    scroll-behavior: smooth;
+}
+
+.flex {
+    display: flex;
+}

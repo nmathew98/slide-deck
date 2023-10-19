@@ -1,5 +1,6 @@
 import React from "react";
 import { type InViewOptions, type ViewChangeHandler, inView } from "motion";
+import "./styles.css";
 
 export interface SlideProps
   extends React.DetailedHTMLProps<
@@ -11,9 +12,7 @@ export interface SlideProps
   options?: InViewOptions;
 }
 
-export interface SlideHandles {
-  scrollIntoView: () => void;
-}
+export type SlideHandles = Pick<HTMLDivElement, "scrollIntoView">;
 
 const DEFAULT_OPTIONS: InViewOptions = {
   amount: 0.5,
@@ -25,7 +24,7 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
       onEnterViewport,
       onExitViewport,
       options = DEFAULT_OPTIONS,
-      style,
+      className,
       ...rest
     },
     ref
@@ -33,15 +32,16 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     const slideRef = React.useRef<null | HTMLDivElement>(null);
 
     const createHandles = (): SlideHandles => ({
-      scrollIntoView: () => slideRef.current?.scrollIntoView(),
+      scrollIntoView: (arg?: boolean | ScrollIntoViewOptions) =>
+        (slideRef.current as HTMLDivElement).scrollIntoView(arg),
     });
 
     React.useImperativeHandle(ref, createHandles, []);
 
-    React.useLayoutEffect(() => {
+    React.useEffect(() => {
       if (!slideRef.current) return;
 
-      const onStart = (entry: IntersectionObserverEntry) => {
+      const onStart: ViewChangeHandler = (entry) => {
         onEnterViewport?.(entry);
 
         return onExitViewport;
@@ -50,17 +50,13 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
       return inView(slideRef.current, onStart, options);
     }, [onEnterViewport, onExitViewport, options]);
 
-    return (
-      <div
-        {...rest}
-        ref={slideRef}
-        style={{
-          height: "100vh",
-          width: "100vw",
-          scrollSnapAlign: "start",
-          ...style,
-        }}
-      />
-    );
+    const classNames = [
+      "h-screen",
+      "w-screen",
+      "snap-start",
+      className ?? "",
+    ].filter(Boolean);
+
+    return <div {...rest} ref={slideRef} className={classNames.join(" ")} />;
   }
 );

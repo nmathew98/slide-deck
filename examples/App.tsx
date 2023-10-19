@@ -3,11 +3,11 @@ import { Slide } from "../src/Slide";
 
 function App() {
   return (
-    <Deck>
+    <Deck startAt={0} horizontal onScroll={console.log}>
       <Slide
         onEnterViewport={() => console.log("enter First!!")}
         onExitViewport={() => console.log("exit first!!")}
-        style={{ backgroundColor: "black" }}
+        style={{ flexBasis: "100%", backgroundColor: "black" }}
       />
       <Slide
         onEnterViewport={() => console.log("enter second!!")}
