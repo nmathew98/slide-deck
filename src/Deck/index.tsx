@@ -137,11 +137,9 @@ export const Deck: React.FC<DeckProps> = ({
           },
         });
 
-        if (horizontal) {
-          return <div className="h-full w-full">{clonedChild}</div>;
-        }
+        if (!horizontal) return clonedChild;
 
-        return clonedChild;
+        return <div className="h-full w-full">{clonedChild}</div>;
       })}
     </div>
   );
