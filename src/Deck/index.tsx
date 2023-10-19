@@ -1,5 +1,6 @@
 import React from "react";
 import { Slide, type SlideProps } from "../Slide";
+import { debounce } from "lodash";
 import { type AxisScrollInfo, scroll } from "motion";
 import "./styles.css";
 
@@ -15,7 +16,7 @@ export interface DeckProps
   startAt?: number;
   horizontal?: boolean;
   disableScrollbarsFor?: false | (HTMLElementTagName | string)[];
-  onScroll?: (scrollInfo: AxisScrollInfo) => void;
+  onScroll?: (scrollInfo: ScrollInfo) => void;
 }
 
 const DEFAULT_SELECTORS: HTMLElementTagName[] = ["html", "body"];
@@ -88,13 +89,27 @@ export const Deck: React.FC<DeckProps> = ({
   }, [startAt]);
 
   React.useEffect(() => {
-    if (!deckRef.current) return;
+    if (!deckRef.current || !onScroll) return;
+
+    const debouncedOnScroll = debounce(onScroll, 50, {
+      leading: true,
+    });
 
     return scroll(
       ({ x, y }) => {
         const scrollInfo = horizontal ? x : y;
 
-        onScroll?.(scrollInfo);
+        const previousSlideIdx = Math.floor(
+          scrollInfo.progress * slides.current.length
+        );
+        const nextSlideIdx =
+          Math.floor(scrollInfo.progress * slides.current.length) + 1;
+
+        debouncedOnScroll({
+          axis: scrollInfo,
+          current: slides.current.at(previousSlideIdx),
+          next: slides.current.at(nextSlideIdx),
+        });
       },
       { container: deckRef.current, axis: horizontal ? "x" : "y" }
     );
@@ -149,3 +164,9 @@ type HTMLElementTagName = keyof HTMLElementTagNameMap;
 
 const isWithinBounds = (idx: number, slides: HTMLDivElement[]) =>
   slides.length > 0 && idx >= 0 && idx <= slides.length - 1;
+
+interface ScrollInfo {
+  axis: AxisScrollInfo;
+  next?: HTMLElement | null;
+  current?: HTMLElement | null;
+}

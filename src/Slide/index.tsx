@@ -12,7 +12,9 @@ export interface SlideProps
   options?: InViewOptions;
 }
 
-export type SlideHandles = Pick<HTMLDivElement, "scrollIntoView">;
+export interface SlideHandles extends Pick<HTMLDivElement, "scrollIntoView"> {
+  instance: null | HTMLDivElement;
+}
 
 const DEFAULT_OPTIONS: InViewOptions = {
   amount: 0.5,
@@ -32,6 +34,7 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     const slideRef = React.useRef<null | HTMLDivElement>(null);
 
     const createHandles = (): SlideHandles => ({
+      instance: slideRef.current,
       scrollIntoView: (arg?: boolean | ScrollIntoViewOptions) =>
         (slideRef.current as HTMLDivElement).scrollIntoView(arg),
     });
