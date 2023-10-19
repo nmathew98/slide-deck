@@ -94,9 +94,10 @@ export const Deck: React.FC<DeckProps> = ({
       ({ x, y }) => {
         const scrollInfo = horizontal ? x : y;
 
-        const fromIdx = Math.floor(scrollInfo.progress * slides.current.length);
-        const toIdx =
-          Math.floor(scrollInfo.progress * slides.current.length) + 1;
+        const fromIdx = Math.floor(
+          scrollInfo.progress * (slides.current.length - 1)
+        );
+        const toIdx = fromIdx + 1;
 
         const from = slides.current.at(fromIdx);
         const to = slides.current.at(toIdx);
