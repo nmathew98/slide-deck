@@ -1,6 +1,5 @@
 import React from "react";
 import { Slide, type SlideProps } from "../Slide";
-import { debounce } from "lodash";
 import { type AxisScrollInfo, scroll } from "motion";
 import "./styles.css";
 
@@ -89,11 +88,7 @@ export const Deck: React.FC<DeckProps> = ({
   }, [startAt]);
 
   React.useEffect(() => {
-    if (!deckRef.current || !onScroll) return;
-
-    const debouncedOnScroll = debounce(onScroll, 50, {
-      leading: true,
-    });
+    if (!deckRef.current) return;
 
     return scroll(
       ({ x, y }) => {
@@ -105,7 +100,7 @@ export const Deck: React.FC<DeckProps> = ({
         const nextSlideIdx =
           Math.floor(scrollInfo.progress * slides.current.length) + 1;
 
-        debouncedOnScroll({
+        onScroll?.({
           axis: scrollInfo,
           current: slides.current.at(previousSlideIdx),
           next: slides.current.at(nextSlideIdx),
