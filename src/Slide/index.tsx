@@ -1,5 +1,9 @@
 import React from "react";
-import { type InViewOptions, type ViewChangeHandler, inView } from "motion";
+import {
+  type InViewOptions,
+  type ViewChangeHandler as MotionViewChangeHandler,
+  inView,
+} from "motion";
 import "./styles.css";
 
 export interface SlideProps
@@ -44,10 +48,14 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     React.useEffect(() => {
       if (!slideRef.current) return;
 
-      const onStart: ViewChangeHandler = (entry) => {
-        onEnterViewport?.(entry);
+      const onStart: MotionViewChangeHandler = (entry) => {
+        onEnterViewport?.({
+          entry,
+          ref: slideRef.current,
+        });
 
-        return onExitViewport;
+        return (entry: IntersectionObserverEntry) =>
+          onExitViewport?.({ entry, ref: slideRef.current });
       };
 
       return inView(slideRef.current, onStart, options);
@@ -63,3 +71,10 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     return <div {...rest} ref={slideRef} className={classNames.join(" ")} />;
   }
 );
+
+export type ViewChangeHandler = (event: SlideViewportEvent) => void;
+
+export interface SlideViewportEvent {
+  entry: IntersectionObserverEntry;
+  ref: HTMLDivElement | null;
+}

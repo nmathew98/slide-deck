@@ -106,6 +106,11 @@ export const Deck: React.FC<DeckProps> = ({
 
         onScroll?.({
           axis: scrollInfo,
+          position: {
+            from: fromIdx,
+            to: to ? toIdx : -1,
+            total: slides.current.length,
+          },
           from,
           to,
         });
@@ -166,6 +171,11 @@ const isWithinBounds = (idx: number, slides: HTMLDivElement[]) =>
 
 interface ScrollInfo {
   axis: AxisScrollInfo;
+  position: {
+    from: number;
+    to: number;
+    total: number;
+  };
   from?: HTMLElement | null;
   to?: HTMLElement | null;
 }
