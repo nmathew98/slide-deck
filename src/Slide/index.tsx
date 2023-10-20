@@ -72,9 +72,9 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
   }
 );
 
-export type ViewChangeHandler = (event: SlideViewportEvent) => void;
+type ViewChangeHandler = (event: SlideViewportEvent) => void;
 
-export interface SlideViewportEvent {
+interface SlideViewportEvent {
   entry: IntersectionObserverEntry;
   ref: HTMLDivElement | null;
 }
