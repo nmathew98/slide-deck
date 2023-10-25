@@ -4,7 +4,7 @@ import {
   type ViewChangeHandler as MotionViewChangeHandler,
   inView,
 } from "motion";
-import "./styles.css";
+import styles from "./styles.module.css";
 
 export interface SlideProps
   extends React.DetailedHTMLProps<
@@ -62,13 +62,15 @@ export const Slide = React.forwardRef<SlideHandles, SlideProps>(
     }, [onEnterViewport, onExitViewport, options]);
 
     const classNames = [
-      "h-screen",
-      "w-screen",
-      "snap-start",
+      styles.hScreen,
+      styles.wScreen,
+      styles.snapStart,
       className ?? "",
-    ].filter(Boolean);
+    ]
+      .filter(Boolean)
+      .join(" ");
 
-    return <div {...rest} ref={slideRef} className={classNames.join(" ")} />;
+    return <div {...rest} ref={slideRef} className={classNames} />;
   }
 );
 
