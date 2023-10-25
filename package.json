@@ -1,7 +1,7 @@
 {
   "name": "@b.s/slide-deck",
   "description": "A simple component library to add full page animations",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "files": [
     "dist"
