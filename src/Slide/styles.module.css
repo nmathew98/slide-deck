@@ -1,0 +1,11 @@
+.hScreen {
+    height: 100vh;
+}
+
+.wScreen {
+    width: 100vw;
+}
+
+.snapStart {
+    scroll-snap-align: start;
+}

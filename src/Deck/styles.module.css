@@ -1,40 +1,40 @@
-.margin-none {
+.marginNone {
     margin: 0rem 0rem 0rem 0rem;
 }
 
-.h-screen {
+.hScreen {
     height: 100vh;
 }
 
-.w-screen {
+.wScreen {
     width: 100vw;
 }
 
-.h-full {
+.hFull {
     height: 100%;
 }
 
-.w-full {
+.wFull {
     width: 100%;
 }
 
-.snap-x {
+.snapX {
     scroll-snap-type: x mandatory;
 }
 
-.snap-y {
+.snapY {
     scroll-snap-type: y mandatory;
 }
 
-.overflow-scroll {
+.overflowScroll {
     overflow: scroll;
 }
 
-.overflow-hidden {
+.overflowHidden {
     overflow: hidden;
 }
 
-.scroll-smooth {
+.scrollSmooth {
     scroll-behavior: smooth;
 }
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Slide, type SlideProps } from "../Slide";
 import { type AxisScrollInfo, scroll } from "motion";
-import "./styles.css";
+import styles from "./styles.module.css";
 
 export interface DeckProps
   extends Omit<
@@ -68,14 +68,14 @@ export const Deck: React.FC<DeckProps> = ({
         (query) => [...document.querySelectorAll(query)] as HTMLElement[]
       )
       .forEach((element) => {
-        if (!element.classList.contains("overflow-hidden"))
-          element.classList.add("overflow-hidden");
+        if (!element.classList.contains(styles.overflowHidden))
+          element.classList.add(styles.overflowHidden);
       });
 
     const bodyElement = document.getElementsByTagName("body").item(0);
 
-    if (!bodyElement?.classList.contains("margin-none"))
-      bodyElement?.classList.add("margin-none");
+    if (!bodyElement?.classList.contains(styles.marginNone))
+      bodyElement?.classList.add(styles.marginNone);
   }, [disableScrollbarsFor]);
 
   React.useLayoutEffect(() => {
@@ -124,20 +124,23 @@ export const Deck: React.FC<DeckProps> = ({
   }, []);
 
   const classNames = [
-    horizontal ? "snap-x" : "snap-y",
-    "w-screen h-screen",
-    "overflow-scroll",
-    "smooth-scroll",
-    horizontal ? "flex" : "",
+    horizontal ? styles.snapX : styles.snapY,
+    styles.wScreen,
+    styles.hScreen,
+    styles.overflowScroll,
+    styles.scrollSmooth,
+    horizontal ? styles.flex : "",
     className ?? "",
-  ].filter(Boolean);
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div
       {...rest}
       ref={deckRef}
       tabIndex={0}
-      className={classNames.join(" ")}
+      className={classNames}
       onKeyDown={onKeyDown}
     >
       {React.Children.map(children, (child, idx) => {
@@ -158,7 +161,9 @@ export const Deck: React.FC<DeckProps> = ({
 
         if (!horizontal) return clonedChild;
 
-        return <div className="h-full w-full">{clonedChild}</div>;
+        const classNames = [styles.hFull, styles.wFull].join(" ");
+
+        return <div className={classNames}>{clonedChild}</div>;
       })}
     </div>
   );
